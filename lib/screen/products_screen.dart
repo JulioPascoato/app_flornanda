@@ -62,7 +62,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                       title: Text('Ainda não há produtos cadastrados'),
                     )
                   : ListView.builder(
-                      reverse: true,
+                      //reverse: true,
                       itemCount: snapshot.data!.length,
                       itemBuilder: (context, index) => ProductItem(
                         product: snapshot.data![index],
