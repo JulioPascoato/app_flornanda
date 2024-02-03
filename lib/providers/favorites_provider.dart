@@ -1,13 +1,17 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flornanda/model/favorites.dart';
+import 'package:flornanda/model/product.dart';
+import 'package:flornanda/services/favorites_service.dart';
 import 'package:flutter/material.dart';
 
-import 'package:flornanda/model/product.dart';
-
 class FavoritesProvider extends ChangeNotifier {
-  List<Product> _favoristlist = [];
+  final FavoritesService _favoriteService = FavoritesService();
 
-  List<Product> get favoristlist => [..._favoristlist];
+  List<Products> _favoristlist = [];
 
-  bool toggleProductFavoriteStatus(Product product) {
+  List<Products> get favoristlist => [..._favoristlist];
+
+  bool toggleProductFavoriteStatus(Products product) {
     final productIsFavorite = _favoristlist.contains(product);
 
     if (productIsFavorite) {
@@ -19,5 +23,16 @@ class FavoritesProvider extends ChangeNotifier {
       notifyListeners();
       return true;
     }
+  }
+
+  Future<void> create(Products product) {
+    Favorites favorito = Favorites(
+        productId: product.id!, userId: FirebaseAuth.instance.currentUser!.uid);
+
+    Future<String> future = _favoriteService.insert(favorito);
+    return future.then((id) {
+      favorito.id = id;
+      notifyListeners();
+    });
   }
 }

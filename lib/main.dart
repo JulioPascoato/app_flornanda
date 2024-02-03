@@ -6,8 +6,17 @@ import 'package:flornanda/providers/products_provider.dart';
 import 'package:flornanda/screen/login_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-void main() {
-  runApp(const FlornandaApp());
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(
+    const FlornandaApp(),
+  );
 }
 
 final ColorScheme colorScheme = ColorScheme.fromSeed(
@@ -48,11 +57,9 @@ class FlornandaApp extends StatelessWidget {
         )
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Flornanda Forminhas',
         theme: theme,
-        // TOBE definided: A rota correta das página produtos será efetuada após o firebase retornar o usuario authenticado
-        // sem a implementação dessa funcionalidade foi efetuado uma rota com pushReplacement.
-        // basta clicar no botão de login para avançar na aplicação.
         home: const LoginScreen(),
       ),
     );

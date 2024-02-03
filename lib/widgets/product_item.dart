@@ -1,14 +1,14 @@
+import 'package:flornanda/model/product.dart';
 import 'package:flutter/material.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-import 'package:flornanda/model/product.dart';
 import 'package:flornanda/screen/product_details.dart';
 import 'package:flornanda/widgets/product_item_trait.dart';
 
 class ProductItem extends StatelessWidget {
   const ProductItem({super.key, required this.product});
 
-  final Product product;
+  final Products product;
 
   @override
   Widget build(BuildContext context) {
@@ -35,10 +35,10 @@ class ProductItem extends StatelessWidget {
         child: Stack(
           children: [
             Hero(
-              tag: product.id,
+              tag: product.id!,
               child: FadeInImage(
                 placeholder: MemoryImage(kTransparentImage),
-                image: FileImage(product.image),
+                image: NetworkImage(product.urlImage),
                 fit: BoxFit.cover,
                 height: 200,
                 width: double.infinity,

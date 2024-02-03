@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flornanda/screen/login_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flornanda/screen/favorites_screen.dart';
@@ -20,15 +22,11 @@ class DrawerNavigation extends StatelessWidget {
           UserAccountsDrawerHeader(
             // <-- SEE HERE
             decoration: BoxDecoration(color: colorScheme.primary),
-            accountName: const Text(
-              "nome da conta",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            accountEmail: const Text(
-              "email_conta@gmail.com",
-              style: TextStyle(
+            accountName: null,
+
+            accountEmail: Text(
+              FirebaseAuth.instance.currentUser!.email.toString(),
+              style: const TextStyle(
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -40,6 +38,7 @@ class DrawerNavigation extends StatelessWidget {
             ),
             title: const Text('Produtos'),
             onTap: () {
+              Navigator.pop(context);
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) => const ProductsScreen(),
@@ -69,6 +68,20 @@ class DrawerNavigation extends StatelessWidget {
               );
             },
           ),
+          ListTile(
+            leading: const Icon(Icons.exit_to_app),
+            title: const Text('sair'),
+            onTap: () {
+              final auth = FirebaseAuth.instance;
+              auth.signOut().then(
+                    (value) => Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (context) => const LoginScreen(),
+                      ),
+                    ),
+                  );
+            },
+          )
         ],
       ),
     );

@@ -1,8 +1,8 @@
 import 'package:flornanda/providers/products_provider.dart';
+import 'package:flornanda/widgets/drawer_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:flornanda/widgets/drawer_navigation.dart';
 import 'package:flornanda/widgets/product_item.dart';
 
 class OnSalesScreen extends StatelessWidget {

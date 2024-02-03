@@ -43,6 +43,10 @@ dependencies:
   path: ^1.8.3
   transparent_image: ^2.0.1
   flutter_launcher_icons: ^0.13.1
+  firebase_core: ^2.25.3
+  firebase_auth: ^4.17.3
+  http: ^1.2.0
+  firebase_storage: ^11.6.4
   
 flutter_launcher_icons:
   android: "launcher_icon"

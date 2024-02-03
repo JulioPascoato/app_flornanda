@@ -1,8 +1,14 @@
 import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flornanda/model/product.dart';
 import 'package:flornanda/providers/products_provider.dart';
 import 'package:flornanda/widgets/image_input.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'package:uuid/uuid.dart';
+
+const uuid = Uuid();
 
 class AddProductScreen extends StatefulWidget {
   const AddProductScreen({super.key});
@@ -13,6 +19,8 @@ class AddProductScreen extends StatefulWidget {
 
 class _AddProductScreenState extends State<AddProductScreen> {
   File? _selectedImage;
+
+  bool _isAuthenticating = false;
 
   final _nameController = TextEditingController();
   final _priceController = TextEditingController();
@@ -25,7 +33,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
   Widget build(BuildContext context) {
     final productProvider = Provider.of<ProductProvider>(context);
 
-    void savePlace() {
+    void saveProduct() async {
       final enteredName = _nameController.text;
       final enteredPrice = _priceController.text;
       final enteredDiscout = _discountController.text;
@@ -43,16 +51,38 @@ class _AddProductScreenState extends State<AddProductScreen> {
         return;
       }
 
-      productProvider.addProduct(
-          enteredName,
-          double.parse(enteredPrice),
-          double.parse(enteredDiscout),
-          int.parse(enteredQuantity),
-          enteredDescription,
-          enteredUrlProduct,
-          _selectedImage!);
+      try {
+        setState(() {
+          _isAuthenticating = true;
+        });
 
-      Navigator.of(context).pop();
+        final storageRef = FirebaseStorage.instance
+            .ref()
+            .child('products_images')
+            .child('${uuid.v4()}.jpg');
+
+        await storageRef.putFile(_selectedImage!);
+        final imageUrl = await storageRef.getDownloadURL();
+
+        Products product = Products(
+          name: enteredName,
+          price: double.parse(enteredPrice),
+          discount: double.parse(enteredDiscout),
+          quantity: int.parse(enteredQuantity),
+          description: enteredDescription,
+          urlProduct: enteredUrlProduct,
+          urlImage: imageUrl,
+        );
+
+        productProvider.create(product).then(
+              (value) => Navigator.of(context).pop(),
+            );
+      } catch (error) {
+        throw Exception('Problemas ao salvar o produto.');
+      }
+      setState(() {
+        _isAuthenticating = false;
+      });
     }
 
     return Scaffold(
@@ -139,11 +169,13 @@ class _AddProductScreenState extends State<AddProductScreen> {
             const SizedBox(
               height: 16,
             ),
-            FilledButton.icon(
-              onPressed: savePlace,
-              icon: const Icon(Icons.add),
-              label: const Text('Adicionar Produto'),
-            ),
+            if (_isAuthenticating) const CircularProgressIndicator(),
+            if (!_isAuthenticating)
+              FilledButton.icon(
+                onPressed: saveProduct,
+                icon: const Icon(Icons.add),
+                label: const Text('Adicionar Produto'),
+              ),
           ],
         ),
       ),

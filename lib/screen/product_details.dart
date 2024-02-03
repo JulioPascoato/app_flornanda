@@ -1,3 +1,5 @@
+import 'package:flornanda/providers/products_provider.dart';
+import 'package:flornanda/widgets/alert_dialog_box.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -10,7 +12,7 @@ class ProductDetailsScreen extends StatelessWidget {
     required this.product,
   });
 
-  final Product product;
+  final Products product;
 
   @override
   Widget build(BuildContext context) {
@@ -22,10 +24,52 @@ class ProductDetailsScreen extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
     final ColorScheme colorScheme = theme.colorScheme;
 
+    final ProductProvider productProvider =
+        Provider.of<ProductProvider>(context);
+
+    void showSnackBar(String msg) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(msg),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
+
+    Future<bool?> showConfirmationDialog(BuildContext context) {
+      return showDialog<bool>(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return const AlertDialogBox(
+              title: 'Excluir',
+              message: 'Deseja realmente excluir?',
+            );
+          });
+    }
+
+    Future<void> deleteItem(String id) async {
+      bool confirmed = (await showConfirmationDialog(context)) ?? false;
+      if (confirmed) {
+        productProvider.delete(id).then((isDeleted) {
+          if (isDeleted) {
+            showSnackBar('Item excluido da lista.');
+            Navigator.of(context).pop();
+          }
+        });
+      }
+    }
+
     return Scaffold(
         appBar: AppBar(
           title: Text(product.name),
           actions: [
+            IconButton(
+              onPressed: () {
+                deleteItem(product.id!);
+              },
+              icon: const Icon(Icons.delete),
+            ),
             IconButton(
               onPressed: () {
                 final wasAdded =
@@ -60,9 +104,9 @@ class ProductDetailsScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Hero(
-                tag: product.id,
-                child: Image.file(
-                  product.image,
+                tag: product.id!,
+                child: Image.network(
+                  product.urlImage,
                   height: 300,
                   width: double.infinity,
                   fit: BoxFit.cover,

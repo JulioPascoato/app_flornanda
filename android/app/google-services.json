@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "685780463583",
+    "project_id": "flornanda-2c990",
+    "storage_bucket": "flornanda-2c990.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:685780463583:android:2635efc572ab9e4b2e9e6a",
+        "android_client_info": {
+          "package_name": "com.example.flornanda"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyABEvjvYOURZY8uEVjYFlc6rTHsEEoIqbk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
